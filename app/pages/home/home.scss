@@ -1,0 +1,46 @@
+.home {
+    scroll-content{
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#83c783+0,52b152+0,008a00+74,005700+99,002400+100 */
+        background: #83c783; /* Old browsers */
+        background: -moz-radial-gradient(center, ellipse cover,  #83c783 0%, #52b152 0%, #008a00 74%, #005700 99%, #002400 100%); /* FF3.6-15 */
+        background: -webkit-radial-gradient(center, ellipse cover,  #83c783 0%,#52b152 0%,#008a00 74%,#005700 99%,#002400 100%); /* Chrome10-25,Safari5.1-6 */
+        background: radial-gradient(ellipse at center,  #83c783 0%,#52b152 0%,#008a00 74%,#005700 99%,#002400 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#83c783', endColorstr='#002400',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    }
+
+    .stage{
+        margin: 10px 5%;
+        background: #fff;
+        padding: 10px;
+        text-align: center;
+        font-size: 1.3em;
+        border-radius: 3px;
+    }
+
+    .pot{
+        margin-top: 10px;
+    }
+
+    .usercontainer{
+        margin: 10px auto;
+        & > span{
+            display:inline-block;
+            vertical-align: top;
+            min-width: 60px;
+            height: 80px;
+            padding: 5px 10px;
+            background: #fff;
+            margin-right: 10px;
+            border-radius: 3px;
+            font-size: 1.1em;
+        }
+        .active{
+            //border: 1px solid red;
+            box-shadow: inset 0 0 0 2px red;
+        }
+    }
+
+    .buttoncontainer{
+        text-align: center;
+    }
+}

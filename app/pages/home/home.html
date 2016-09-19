@@ -1,0 +1,38 @@
+<ion-content padding class="home">
+  <container *ngIf="PLAYERS && PLAYERS.length > 0">
+    <div class="stage">
+      <div *ngIf="pageState==1">Deal Cards</div>
+      <div *ngIf="pageState==2">Deal Flop</div>
+      <div *ngIf="pageState==3">Deal Turn</div>
+      <div *ngIf="pageState==4">Deal River</div>
+      <div *ngIf="pageState==5">Show Cards</div>
+      <div *ngIf="winner?.length> 0" class="winner">Winner: {{winner}}, Won: ${{POT}}</div>
+      <div *ngIf="winner && winner == 'Choose Winner'">
+        <button *ngFor="let player of PLAYERS" (click)="payWinner(player)" inline outline>{{player.name}}</button>
+      </div>
+      <div class="pot">POT ${{POT}}</div>
+    </div>
+    <hr>
+    <div class="usercontainer">
+      <span *ngFor="let player of PLAYERS" [class.active]="player.active">
+            <div>{{player.name}}</div>
+            <div>${{player.balance}}</div>
+            <div *ngIf="player.id == dealerID" class="dealer">D</div>
+            <div *ngIf="player.id == smallBlindID" class="smallBlind">SB</div>
+            <div *ngIf="player.id == bigBlindID" class="bigBlind">BB</div>
+            <div *ngIf="player.state == 'raised'" class="folded">Raised</div>
+            <div *ngIf="player.state == 'called'" class="folded">Called</div>
+            <div *ngIf="player.state == 'checked'" class="folded">Checked</div>
+            <div *ngIf="player.state == 'folded'" class="folded">Folded</div>
+        </span>
+    </div>
+    <div class="buttoncontainer">
+      <button (click)="raise()" [disabled]="winner?.length> 0">Raise</button>
+      <button (click)="call()" [disabled]="winner?.length> 0 || (currentBet - PLAYERS[PLAYING - 1]?.paid == 0)">Call (${{currentBet - PLAYERS[PLAYING - 1]?.paid}})</button>
+      <button (click)="check()" [disabled]="((currentBet - PLAYERS[PLAYING - 1]?.paid) != 0) || winner?.length> 0">Check</button>
+      <button (click)="fold()" [disabled]="winner?.length> 0">Fold</button>
+    </div>
+    <hr>
+    <button (click)="next()">Next Hand</button>
+  </container>
+</ion-content>

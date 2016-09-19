@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Create Game
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding class="about">
+    <form #gameForm="ngForm" novalidate>
+      <!-- <ion-item>
+        <ion-label floating primary>Username</ion-label>
+        <ion-input [(ngModel)]="game.username" name="username" type="text" #username="ngModel" spellcheck="false" autocapitalize="off" required>
+        </ion-input>
+      </ion-item>
+      <p [hidden]="username.valid || submitted == false" danger padding-left>
+        Username is required
+      </p>
+
+      <ion-item>
+        <ion-label floating primary>Password</ion-label>
+        <ion-input [(ngModel)]="game.password" name="password" type="password" #password="ngModel" required>
+        </ion-input>
+      </ion-item>
+      <p [hidden]="password.valid || submitted == false" danger padding-left>
+        Password is required
+      </p> -->
+
+      <ion-row responsive-sm>
+        <ion-col>
+          <button (click)="onCreate(gameForm)" type="submit" primary block>Create Game</button>
+        </ion-col>
+      </ion-row>
+    </form>
+</ion-content>
