@@ -1,38 +1,92 @@
-<ion-content padding class="home">
-  <container *ngIf="PLAYERS && PLAYERS.length > 0">
-    <div class="stage">
-      <div *ngIf="pageState==1">Deal Cards</div>
-      <div *ngIf="pageState==2">Deal Flop</div>
-      <div *ngIf="pageState==3">Deal Turn</div>
-      <div *ngIf="pageState==4">Deal River</div>
-      <div *ngIf="pageState==5">Show Cards</div>
-      <div *ngIf="winner?.length> 0" class="winner">Winner: {{winner}}, Won: ${{POT}}</div>
-      <div *ngIf="winner && winner == 'Choose Winner'">
-        <button *ngFor="let player of PLAYERS" (click)="payWinner(player)" inline outline>{{player.name}}</button>
-      </div>
-      <div class="pot">POT ${{POT}}</div>
-    </div>
-    <hr>
-    <div class="usercontainer">
-      <span *ngFor="let player of PLAYERS" [class.active]="player.active">
-            <div>{{player.name}}</div>
-            <div>${{player.balance}}</div>
-            <div *ngIf="player.id == dealerID" class="dealer">D</div>
-            <div *ngIf="player.id == smallBlindID" class="smallBlind">SB</div>
-            <div *ngIf="player.id == bigBlindID" class="bigBlind">BB</div>
-            <div *ngIf="player.state == 'raised'" class="folded">Raised</div>
-            <div *ngIf="player.state == 'called'" class="folded">Called</div>
-            <div *ngIf="player.state == 'checked'" class="folded">Checked</div>
-            <div *ngIf="player.state == 'folded'" class="folded">Folded</div>
-        </span>
-    </div>
-    <div class="buttoncontainer">
-      <button (click)="raise()" [disabled]="winner?.length> 0">Raise</button>
-      <button (click)="call()" [disabled]="winner?.length> 0 || (currentBet - PLAYERS[PLAYING - 1]?.paid == 0)">Call (${{currentBet - PLAYERS[PLAYING - 1]?.paid}})</button>
-      <button (click)="check()" [disabled]="((currentBet - PLAYERS[PLAYING - 1]?.paid) != 0) || winner?.length> 0">Check</button>
-      <button (click)="fold()" [disabled]="winner?.length> 0">Fold</button>
-    </div>
-    <hr>
-    <button (click)="next()">Next Hand</button>
-  </container>
+<ion-content class="home">
+    <container *ngIf="PLAYERS && PLAYERS.length > 0">
+
+        <ion-grid>
+            <ion-row>
+                <ion-col width-33 class="usercontainer">
+                    <div *ngFor="let player of PLAYERS" [class.active]="player.active" [class.out]="player.state == 'folded'">
+                        <div>{{player.name}}</div>
+                        <div class="balance">${{player.balance}}</div>
+                        <div *ngIf="player.id == dealerID" class="chip dealer">D</div>
+                        <div *ngIf="player.id == smallBlindID" class="chip smallBlind">SB</div>
+                        <div *ngIf="player.id == bigBlindID" class="chip bigBlind">BB</div>
+                        <div *ngIf="player.state == 'raised'" class="state raised">Raise ${{currentBet}}</div>
+                        <div *ngIf="player.state == 'called'" class="state called">Call</div>
+                        <div *ngIf="player.state == 'checked'" class="state checked">Check</div>
+                        <div *ngIf="player.state == 'folded'" class="state folded">Fold</div>
+                        <div *ngIf="player.out" class="state folded">OUT</div>
+                    </div>
+                </ion-col>
+
+                <ion-col class="board">
+                    <div class="stage">
+                        <div *ngIf="pageState==1">Deal Cards</div>
+                        <div *ngIf="pageState==2">Deal Flop</div>
+                        <div *ngIf="pageState==3">Deal Turn</div>
+                        <div *ngIf="pageState==4">Deal River</div>
+                        <div *ngIf="pageState==5">Show Cards</div>
+                        <div *ngIf="winner?.length> 0" class="winner">Winner: {{winner}}, Won: ${{POT}}</div>
+                    </div>
+                    <div class="pot">
+                        <div>POT ${{POT}}</div>
+                        <div class="blinds">Blinds - ${{smallBlind}}/${{bigBlind}}</div>
+                    </div>
+
+                    <div *ngIf="winner && winner == 'Choose Winner'">
+                        <div>Choose Winner:</div>
+                        <button *ngFor="let player of PLAYERS" (click)="payWinner(player)" [hidden]="player.out || player.state == 'folded'" inline outline>{{player.name}}</button>
+                    </div>
+
+                    <div class="buttoncontainer" *ngIf="!winner">
+                        <ion-range [min]="minRaise()" [max]="maxRaise()" [step]="smallBlind" [(ngModel)]="raising">
+                            <ion-icon range-left small>${{minRaise()}}</ion-icon>
+                            <ion-icon range-right small>${{maxRaise()}}</ion-icon>
+                        </ion-range>
+                        <button (click)="raise(raising)" [disabled]="winner?.length> 0 || (currentBet >= PLAYERS[PLAYING - 1]?.balance)" block>Raise ${{raising || minRaise()}}</button>
+                        <button (click)="call()" [disabled]="winner?.length> 0 || (currentBet - PLAYERS[PLAYING - 1]?.paid == 0)" [hidden]="(currentBet >= PLAYERS[PLAYING - 1]?.balance)" block>Call (${{currentBet - PLAYERS[PLAYING - 1]?.paid}})</button>
+                        <button (click)="allIn()" [hidden]="!(currentBet >= PLAYERS[PLAYING - 1]?.balance)" block>All In</button>
+                        <button (click)="check()" [disabled]="((currentBet - PLAYERS[PLAYING - 1]?.paid) != 0) || winner?.length> 0" block>Check</button>
+                        <button (click)="fold()" [disabled]="winner?.length> 0" block>Fold</button>
+                    </div>
+                    <hr>
+                    <button (click)="next()" block secondary [disabled]="!winner">Next Hand</button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+
+        <!-- <div class="stage">
+            <div *ngIf="pageState==1">Deal Cards</div>
+            <div *ngIf="pageState==2">Deal Flop</div>
+            <div *ngIf="pageState==3">Deal Turn</div>
+            <div *ngIf="pageState==4">Deal River</div>
+            <div *ngIf="pageState==5">Show Cards</div>
+            <div *ngIf="winner?.length> 0" class="winner">Winner: {{winner}}, Won: ${{POT}}</div>
+            <div *ngIf="winner && winner == 'Choose Winner'">
+                <button *ngFor="let player of PLAYERS" (click)="payWinner(player)" inline outline>{{player.name}}</button>
+            </div>
+            <div class="pot">POT ${{POT}}</div>
+        </div>
+        <hr>
+        <div class="usercontainer">
+            <span *ngFor="let player of PLAYERS" [class.active]="player.active">
+                <div>{{player.name}}</div>
+                <div>${{player.balance}}</div>
+                <div *ngIf="player.id == dealerID" class="dealer">D</div>
+                <div *ngIf="player.id == smallBlindID" class="smallBlind">SB</div>
+                <div *ngIf="player.id == bigBlindID" class="bigBlind">BB</div>
+                <div *ngIf="player.state == 'raised'" class="folded">Raised</div>
+                <div *ngIf="player.state == 'called'" class="folded">Called</div>
+                <div *ngIf="player.state == 'checked'" class="folded">Checked</div>
+                <div *ngIf="player.state == 'folded'" class="folded">Folded</div>
+            </span>
+        </div>
+        <div class="buttoncontainer">
+            <button (click)="raise()" [disabled]="winner?.length> 0">Raise</button>
+            <button (click)="call()" [disabled]="winner?.length> 0 || (currentBet - PLAYERS[PLAYING - 1]?.paid == 0)">Call (${{currentBet - PLAYERS[PLAYING - 1]?.paid}})</button>
+            <button (click)="check()" [disabled]="((currentBet - PLAYERS[PLAYING - 1]?.paid) != 0) || winner?.length> 0">Check</button>
+            <button (click)="fold()" [disabled]="winner?.length> 0">Fold</button>
+        </div>
+        <hr>
+        <button (click)="next()">Next Hand</button> -->
+    </container>
 </ion-content>

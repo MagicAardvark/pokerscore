@@ -12,3 +12,11 @@
 @import "../pages/contact/contact";
 
 @import "../pages/home/home";
+
+button{
+    border-radius: 6px!important;
+    text-transform: none !important;
+    box-shadow: inset 0 -2px 2px rgba(0,0,0,.3), inset -2px 0px 2px rgba(0,0,0,.3), inset 2px 0px 2px rgba(0,0,0,.3), inset 0 4px 4px rgba(255,255,255,.3) !important ;
+    padding-top: 1.5em!important;
+    padding-bottom: 1.5em!important;
+}
